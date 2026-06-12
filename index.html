@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>HACTEL — Professional AI Tools</title>
+<script src="hactel-core.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@700;800;900&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0A0800;--bg2:#111100;--bg3:#1A1500;--bg4:#242000;
+  --gold1:#C9A030;--gold2:#E8B84B;--gold3:#F5D070;--gold4:#FFE89A;
+  --text:#F5F0E8;--text2:#C4B896;--text3:#8A7A5A;
+  --border:rgba(201,160,48,.18);--card:rgba(15,12,3,.9);
+  --red:#EF4444;--green:#22C55E;
+  --grad:linear-gradient(135deg,#8B6A00,#C9A030,#E8B84B);
+  --grad2:linear-gradient(135deg,#C9A030,#FFE89A);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--gold1);border-radius:3px}
+canvas#bg3d{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.z1{position:relative;z-index:1}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;align-items:center;padding:0 28px;gap:8px;background:rgba(8,6,0,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(20px)}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:auto;cursor:pointer}
+.nav-logo img{height:38px;filter:drop-shadow(0 0 8px rgba(201,160,48,.4))}
+.nav-logo-txt{font-family:'Poppins',sans-serif;font-size:20px;font-weight:900;letter-spacing:2px;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-btn{color:var(--text3);font-size:13px;font-weight:500;padding:7px 14px;border-radius:8px;border:none;background:none;cursor:pointer;font-family:inherit;transition:all .2s}
+.nav-btn:hover,.nav-btn.on{color:var(--gold2);background:rgba(201,160,48,.08)}
+.nav-user{display:flex;align-items:center;gap:8px;padding:6px 14px;border-radius:10px;background:rgba(201,160,48,.08);border:1px solid var(--border);cursor:pointer;transition:all .2s}
+.nav-user:hover{background:rgba(201,160,48,.14)}
+.nav-av{width:28px;height:28px;background:var(--grad);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#0A0800}
+.nav-uname{font-size:12px;font-weight:600;color:var(--gold2)}
+
+/* PAGES */
+.page{display:none;padding-top:64px}.page.on{display:block}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:90px 28px 60px}
+.hero-eye{display:inline-flex;align-items:center;gap:8px;background:rgba(201,160,48,.08);border:1px solid rgba(201,160,48,.3);color:var(--gold3);font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:7px 18px;border-radius:20px;margin-bottom:28px;animation:fadeUp .6s ease}
+.hero h1{font-family:'Poppins',sans-serif;font-size:clamp(36px,6vw,72px);font-weight:900;line-height:1.05;letter-spacing:-2px;margin-bottom:20px;animation:fadeUp .7s ease}
+.hero h1 .g{background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:17px;color:var(--text2);line-height:1.75;max-width:520px;margin:0 auto 40px;animation:fadeUp .8s ease}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;animation:fadeUp .9s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:none}}
+
+/* TOOL CARDS on homepage */
+.tools-strip{padding:70px 0;position:relative;z-index:1}
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1100px;margin:0 auto;padding:0 28px}
+.tool-card-home{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px 24px;transition:all .3s;cursor:pointer;position:relative;overflow:hidden}
+.tool-card-home::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad)}
+.tool-card-home:hover{border-color:var(--gold1);transform:translateY(-6px);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.tc-icon{width:52px;height:52px;background:rgba(201,160,48,.1);border:1px solid rgba(201,160,48,.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:18px}
+.tc-name{font-size:17px;font-weight:700;color:var(--text);margin-bottom:8px}
+.tc-desc{font-size:13px;color:var(--text3);line-height:1.65;margin-bottom:16px}
+.tc-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;background:rgba(201,160,48,.08);border:1px solid rgba(201,160,48,.2);color:var(--gold3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px}
+
+/* BUTTONS */
+.btn-gold{background:var(--grad);color:#0A0800;font-size:15px;font-weight:700;padding:13px 32px;border-radius:12px;border:none;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px;box-shadow:0 6px 24px rgba(201,160,48,.3);font-family:inherit}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(201,160,48,.5)}
+.btn-gold:disabled{background:rgba(80,60,0,.3);box-shadow:none;cursor:not-allowed;color:rgba(10,8,0,.5)}
+.btn-out{background:rgba(201,160,48,.06);color:var(--text);font-size:15px;font-weight:600;padding:13px 28px;border-radius:12px;border:1.5px solid var(--border);cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px;font-family:inherit}
+.btn-out:hover{background:rgba(201,160,48,.12);border-color:var(--gold1)}
+.btn-sm{padding:8px 18px;font-size:13px;border-radius:9px}
+.btn-green{background:#22C55E;color:#fff;font-size:13px;font-weight:700;padding:10px 22px;border-radius:10px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:7px;text-decoration:none;transition:opacity .2s}
+.btn-green:hover{opacity:.85}
+
+/* TOOL PAGES */
+.tool-page{max-width:860px;margin:0 auto;padding:36px 28px 80px}
+.tool-hdr{margin-bottom:32px}
+.tool-hdr h2{font-family:'Poppins',sans-serif;font-size:28px;font-weight:800;color:var(--text);letter-spacing:-1px;margin-bottom:6px}
+.tool-hdr p{font-size:15px;color:var(--text3)}
+.tback{display:flex;align-items:center;gap:7px;color:var(--text3);font-size:13px;font-weight:500;cursor:pointer;margin-bottom:24px;border:none;background:none;font-family:inherit;transition:color .2s}
+.tback:hover{color:var(--gold2)}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px}
+.card+.card{margin-top:16px}
+.card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+
+/* INPUTS */
+.inp{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;background:rgba(8,6,0,.8);color:var(--text);outline:none;transition:border-color .2s}
+.inp:focus{border-color:var(--gold1);box-shadow:0 0 0 3px rgba(201,160,48,.08)}
+.inp::placeholder{color:var(--text3)}
+.big-inp{font-size:16px;padding:14px 16px;border:2px solid var(--border);border-radius:12px}
+.big-inp:focus{border-color:var(--gold1)}
+.il{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:6px;display:block}
+.ig{margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+select.inp{cursor:pointer}
+
+/* API KEY BOX */
+.api-box{background:rgba(8,6,0,.5);border:1px solid rgba(201,160,48,.1);border-radius:12px;padding:16px;margin-bottom:18px}
+.api-row{display:flex;gap:8px;margin-bottom:7px}
+.api-inp{flex:1;padding:10px 13px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-family:monospace;background:rgba(6,5,0,.8);color:var(--text);outline:none;transition:border-color .2s}
+.api-inp:focus{border-color:var(--gold1)}
+
+/* CREDIT BAR */
+.cred-bar{display:flex;align-items:center;gap:12px;background:rgba(10,8,0,.6);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:20px}
+.cred-track{flex:1;height:5px;background:rgba(201,160,48,.1);border-radius:3px;overflow:hidden}
+.cred-fill{height:100%;background:var(--grad);border-radius:3px;transition:width .4s}
+
+/* PROGRESS */
+.prog-box{background:rgba(10,8,0,.5);border:1px solid var(--border);border-radius:12px;padding:18px;display:none;margin-top:4px}
+.prog-box.show{display:block}
+.prog-step{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:13px;color:var(--text3);transition:color .3s}
+.prog-step.done{color:var(--green)}.prog-step.active{color:var(--text);font-weight:600}
+.s-dot{width:22px;height:22px;border-radius:50%;flex-shrink:0;background:rgba(201,160,48,.08);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;transition:all .3s}
+.prog-step.done .s-dot{background:var(--green);color:#fff}
+.prog-step.active .s-dot{background:var(--gold1);color:#0A0800;animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(201,160,48,.5)}50%{box-shadow:0 0 0 8px rgba(201,160,48,0)}}
+
+/* RESULT BOX */
+.res-box{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.2);border-radius:13px;padding:20px;display:none;margin-top:12px}
+.res-box.show{display:block;animation:fadeUp .3s ease}
+.err-box{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:14px;display:none;margin-top:10px;font-size:13px;color:var(--red);line-height:1.6}
+.err-box.show{display:block}
+
+/* INFO BOX */
+.info-box{background:rgba(201,160,48,.05);border:1px solid rgba(201,160,48,.14);border-radius:9px;padding:12px;font-size:12px;color:var(--text3);line-height:1.7;margin-bottom:14px}
+.info-box a{color:var(--gold2)}
+
+/* IMG DROP */
+.img-drop{border:2px dashed var(--border);border-radius:10px;padding:14px 16px;text-align:center;cursor:pointer;font-size:12px;color:var(--text3);background:rgba(8,6,0,.3);transition:all .2s;display:flex;align-items:center;gap:10px}
+.img-drop:hover{border-color:var(--gold1)}
+.img-drop.has{border-style:solid;border-color:var(--gold1);color:var(--gold2)}
+
+/* STYLE TOGGLE */
+.style-tog{display:flex;gap:7px}
+.stbtn{flex:1;padding:9px;border-radius:9px;border:1.5px solid var(--border);font-size:12px;font-weight:600;background:rgba(8,6,0,.5);color:var(--text3);cursor:pointer;transition:all .15s;text-align:center;font-family:inherit}
+.stbtn.on{background:rgba(201,160,48,.12);border-color:var(--gold1);color:var(--gold2)}
+
+/* FORMAT CHECKBOXES */
+.fmt-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:6px}
+.fmt-opt{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);cursor:pointer}
+.fmt-opt input{accent-color:var(--gold1);width:15px;height:15px}
+
+/* TOAST */
+#toasts{position:fixed;bottom:22px;left:22px;z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none}
+.toast{background:rgba(12,10,3,.97);color:var(--text);font-size:13px;padding:11px 16px;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.6);display:flex;align-items:center;gap:9px;border:1px solid var(--border);max-width:300px;animation:slideIn .3s ease;cursor:pointer;pointer-events:all}
+.toast.ok{border-color:rgba(34,197,94,.3)}.toast.err{border-color:rgba(239,68,68,.3)}
+
+/* MODAL */
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+.modal-ov.open{display:flex}
+.modal{background:rgba(8,6,0,.98);border:1px solid var(--border);border-radius:22px;width:100%;max-width:680px;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 32px 100px rgba(0,0,0,.8)}
+.modal-hd{background:linear-gradient(135deg,#0A0800,#1A1200);padding:18px 22px;display:flex;align-items:center;justify-content:space-between;border-radius:22px 22px 0 0;border-bottom:1px solid var(--border)}
+.modal-hd h3{font-size:16px;font-weight:700;color:var(--text)}
+.modal-close{background:none;border:none;color:var(--text3);font-size:22px;cursor:pointer}
+.modal-close:hover{color:var(--text)}
+.modal-bd{padding:22px;overflow-y:auto;flex:1}
+.modal-ft{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:9px;justify-content:flex-end}
+.prev-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold2);margin-bottom:7px;margin-top:16px}
+.prev-lbl:first-child{margin-top:0}
+.prev-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.prev-tbl th{background:rgba(139,106,0,.4);color:var(--text);padding:6px 10px;text-align:left;font-size:10px}
+.prev-tbl td{padding:6px 10px;border-bottom:1px solid var(--border);color:var(--text2)}
+.prev-tbl tr:nth-child(even) td{background:rgba(201,160,48,.03)}
+
+/* CHAT */
+.chatbot{position:fixed;bottom:22px;right:22px;z-index:200}
+.chat-toggle{width:56px;height:56px;background:var(--grad);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 8px 28px rgba(201,160,48,.45);transition:all .2s}
+.chat-toggle:hover{transform:scale(1.08)}
+.chat-win{position:absolute;bottom:68px;right:0;width:330px;background:rgba(8,6,0,.98);border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:0 32px 100px rgba(0,0,0,.8);display:none;flex-direction:column}
+.chat-win.open{display:flex;animation:fadeUp .3s ease}
+.chat-hd{background:linear-gradient(135deg,#0A0800,#1A1200);padding:14px 16px;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--border)}
+.chat-hd-av{width:32px;height:32px;background:var(--grad);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden}
+.chat-hd-av img{width:100%;height:100%;object-fit:cover}
+.chat-close{margin-left:auto;background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer}
+.chat-msgs{height:250px;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.cmsg{padding:9px 13px;border-radius:11px;font-size:12px;max-width:85%;line-height:1.55}
+.cmsg.bot{background:rgba(201,160,48,.08);color:var(--text2);align-self:flex-start}
+.cmsg.user{background:var(--grad);color:#0A0800;align-self:flex-end;font-weight:600}
+.chat-inp-row{display:flex;gap:7px;padding:11px 13px;border-top:1px solid var(--border)}
+.chat-text{flex:1;padding:9px 13px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;background:rgba(8,6,0,.8);color:var(--text);outline:none;font-family:inherit}
+.chat-text:focus{border-color:var(--gold1)}
+.chat-send{background:var(--grad);color:#0A0800;width:36px;height:36px;border-radius:9px;border:none;cursor:pointer;font-size:14px;flex-shrink:0}
+
+/* FOOTER */
+footer{background:rgba(5,4,0,.95);border-top:1px solid var(--border);padding:44px 0 22px;position:relative;z-index:1}
+.ft-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:36px;max-width:1100px;margin:0 auto;padding:0 28px 32px;border-bottom:1px solid var(--border)}
+.ft-name{font-family:'Poppins',sans-serif;font-size:20px;font-weight:900;letter-spacing:2px;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+.ft-desc{font-size:12px;color:var(--text3);line-height:1.75;max-width:220px}
+footer h4{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:12px}
+.ft-link{display:block;font-size:12px;color:var(--text3);text-decoration:none;margin-bottom:7px;transition:color .2s;cursor:pointer}
+.ft-link:hover{color:var(--gold2)}
+.ft-bottom{max-width:1100px;margin:0 auto;padding:18px 28px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.ft-copy{font-size:11px;color:var(--text3)}
+
+/* ABOUT */
+.about-sec{padding:70px 0;position:relative;z-index:1}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;max-width:1000px;margin:0 auto;padding:0 28px}
+.about-logo-big{text-align:center}
+.about-logo-big img{height:180px;filter:drop-shadow(0 0 40px rgba(201,160,48,.5))}
+.tag{background:rgba(201,160,48,.1);border:1px solid rgba(201,160,48,.2);color:var(--gold3);font-size:11px;font-weight:600;padding:4px 13px;border-radius:20px;display:inline-block;margin:3px 3px 3px 0}
+.sec-eye{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold2);margin-bottom:8px}
+.sec-h{font-family:'Poppins',sans-serif;font-size:clamp(26px,3.5vw,40px);font-weight:800;letter-spacing:-1px;line-height:1.12;margin-bottom:12px}
+.sec-sub{font-size:15px;color:var(--text2);line-height:1.75;margin-bottom:18px}
+
+/* PDF2PPTX TOOL */
+.upload-zone{border:2px dashed var(--border);border-radius:14px;padding:40px 24px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(8,6,0,.3)}
+.upload-zone:hover,.upload-zone.has{border-color:var(--gold1);background:rgba(201,160,48,.04)}
+.upload-zone .icon{font-size:48px;margin-bottom:12px}
+.upload-zone h4{font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px}
+.upload-zone p{font-size:12px;color:var(--text3)}
+
+/* TRANSLATOR TOOL */
+.lang-sel-row{display:flex;gap:10px;align-items:center}
+.lang-arrow{font-size:20px;color:var(--gold2)}
+
+/* SCALE BAR */
+#scale-bar{position:fixed;top:64px;left:0;right:0;z-index:90;background:rgba(10,8,0,.9);border-bottom:1px solid var(--border);padding:6px 20px;display:none;align-items:center;gap:8px;backdrop-filter:blur(10px)}
+#scale-bar.show{display:flex}
+#scale-bar span{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3)}
+.scale-btn{padding:4px 11px;border-radius:7px;border:1px solid var(--border);background:rgba(201,160,48,.04);color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit}
+.scale-btn:hover,.scale-btn.on{background:rgba(201,160,48,.14);border-color:var(--gold1);color:var(--gold2)}
+
+/* CURSOR */
+#cur{position:fixed;pointer-events:none;z-index:99999;width:10px;height:10px;border-radius:50%;background:rgba(201,160,48,.6);transform:translate(-50%,-50%);transition:left .04s,top .04s,width .15s,height .15s}
+#cur-ring{position:fixed;pointer-events:none;z-index:99998;width:30px;height:30px;border-radius:50%;border:1px solid rgba(201,160,48,.25);transform:translate(-50%,-50%);transition:left .1s,top .1s}
+
+/* RESPONSIVE */
+@media(max-width:850px){.tools-grid{grid-template-columns:1fr}.about-grid{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.ft-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div id="toasts"></div>
+<div id="cur"></div><div id="cur-ring"></div>
+<canvas id="bg3d"></canvas>
+
+<!-- SCALE BAR -->
+<div id="scale-bar">
+  <span>Text Scale:</span>
+  <button class="scale-btn" onclick="setScale(50)">50%</button>
+  <button class="scale-btn" onclick="setScale(75)">75%</button>
+  <button class="scale-btn" onclick="setScale(90)">90%</button>
+  <button class="scale-btn on" id="scaleBtn100" onclick="setScale(100)">100%</button>
+  <button class="scale-btn" onclick="setScale(110)">110%</button>
+  <button class="scale-btn" onclick="setScale(125)">125%</button>
+  <button class="scale-btn" onclick="setScale(150)">150%</button>
+  <button class="scale-btn" onclick="setScale(175)">175%</button>
+  <button class="scale-btn" onclick="setScale(200)">200%</button>
+</div>
+
+<!-- NAV -->
+<nav id="mainNav" style="display:none">
+  <div class="nav-logo" onclick="navTo('home')">
+    <img src="" id="nav-logo" alt="H"/>
+    <span class="nav-logo-txt">HACTEL</span>
+  </div>
+  <button class="nav-btn" onclick="navTo('home')">Home</button>
+  <button class="nav-btn" onclick="navTo('ds')">Datasheet</button>
+  <button class="nav-btn" onclick="navTo('p2p')">PDF→PPTX</button>
+  <button class="nav-btn" onclick="navTo('trl')">Translator</button>
+  <button class="nav-btn" onclick="navTo('about')">About</button>
+  <div id="nav-user-area"></div>
+</nav>
+
+<!-- ═══ HOME ═══ -->
+<div class="page on z1" id="page-home">
+  <div class="hero z1">
+    <div class="hero-eye">🏢 HACTEL · Internal Tools Platform</div>
+    <h1>AI Tools for<br/><span class="g">IT Professionals</span></h1>
+    <p class="hero-sub">Generate datasheets, convert PDFs, translate documents — all powered by AI with the HACTEL brand.</p>
+    <div class="hero-btns">
+      <button class="btn-gold" onclick="navTo('ds')">⚡ Datasheet Generator</button>
+      <button class="btn-out" onclick="navTo('about')">About HACTEL →</button>
+    </div>
+  </div>
+
+  <div class="tools-strip z1">
+    <div class="tools-grid">
+      <div class="tool-card-home" onclick="navTo('ds')">
+        <div class="tc-icon">📄</div>
+        <div class="tc-name">Datasheet Generator</div>
+        <div class="tc-desc">Enter any product model. AI fetches real specs, builds exact HACTEL A4 portrait datasheet with all tables, brand logo, and contact footer.</div>
+        <div class="tc-badge">⚡ AI-Powered</div>
+      </div>
+      <div class="tool-card-home" onclick="navTo('p2p')">
+        <div class="tc-icon">📑</div>
+        <div class="tc-name">PDF → PowerPoint</div>
+        <div class="tc-desc">Upload any PDF. AI extracts the content and builds a clean, professional PowerPoint presentation automatically. No manual work needed.</div>
+        <div class="tc-badge">🔄 Auto-Convert</div>
+      </div>
+      <div class="tool-card-home" onclick="navTo('trl')">
+        <div class="tc-icon">🌍</div>
+        <div class="tc-name">Document Translator</div>
+        <div class="tc-desc">Translate any document between 20+ languages. Choose input format (PDF, Word, text), select target language, choose output format.</div>
+        <div class="tc-badge">🌐 20+ Languages</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="z1">
+    <div class="ft-grid">
+      <div>
+        <div class="ft-name">HACTEL</div>
+        <p class="ft-desc">Algerian company specialized in security, networks, telephony, and IT infrastructure solutions.</p>
+      </div>
+      <div>
+        <h4>Tools</h4>
+        <span class="ft-link" onclick="navTo('ds')">Datasheet Generator</span>
+        <span class="ft-link" onclick="navTo('p2p')">PDF → PowerPoint</span>
+        <span class="ft-link" onclick="navTo('trl')">Document Translator</span>
+        <a class="ft-link" href="admin.html">Admin Panel</a>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <span class="ft-link" onclick="navTo('about')">About HACTEL</span>
+        <a class="ft-link" href="privacy.html">Privacy Policy</a>
+        <span class="ft-link">info@hactel.com</span>
+        <span class="ft-link">+213 23 34 84 10</span>
+      </div>
+    </div>
+    <div class="ft-bottom">
+      <div class="ft-copy">© 2025 HACTEL · All Rights Reserved</div>
+      <div class="ft-copy">Internal Tools Platform</div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══ DATASHEET TOOL ═══ -->
+<div class="page z1" id="page-ds" style="background:var(--bg)">
+<div class="tool-page">
+  <button class="tback" onclick="navTo('home')">← Back to Home</button>
+  <div class="tool-hdr">
+    <h2>📄 Datasheet Generator</h2>
+    <p>Real specs from manufacturer sources · Exact HACTEL A4 template · All tables · Brand logo · Contact footer</p>
+  </div>
+
+  <!-- Credits -->
+  <div class="cred-bar">
+    <span style="font-size:20px">🪙</span>
+    <div style="flex:1">
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Credits</div>
+      <div style="font-size:19px;font-weight:800;color:var(--text)" id="credVal">—</div>
+    </div>
+    <div class="cred-track"><div class="cred-fill" id="credFill" style="width:100%"></div></div>
+  </div>
+
+  <!-- API Key -->
+  <div class="api-box">
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:11px">
+      <span style="font-size:17px">🔑</span>
+      <div><div style="font-size:13px;font-weight:700">OpenAI API Key</div><div style="font-size:11px;color:var(--text3)">Required. Stored in your browser only.</div></div>
+    </div>
+    <div class="api-row">
+      <input type="password" class="api-inp" id="apiKey" placeholder="sk-proj-..."/>
+      <button class="btn-gold btn-sm" onclick="saveKey()">Save</button>
+    </div>
+    <div style="font-size:11px;color:var(--text3)">Get key: <a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--gold2)">platform.openai.com/api-keys</a></div>
+  </div>
+
+  <!-- Generator Card -->
+  <div class="card">
+    <div class="card-title" style="font-size:15px;display:flex;align-items:center;gap:8px">⚡ Generate HACTEL Datasheet</div>
+
+    <!-- Language -->
+    <div class="ig">
+      <label class="il">Language</label>
+      <select class="inp" id="dsLang" style="width:200px">
+        <option value="English">🇬🇧 English</option>
+        <option value="French">🇫🇷 Français</option>
+        <option value="Arabic">🇩🇿 العربية</option>
+        <option value="Spanish">🇪🇸 Español</option>
+        <option value="Chinese">🇨🇳 中文</option>
+      </select>
+    </div>
+
+    <!-- Output formats -->
+    <div class="ig">
+      <label class="il">Output Formats</label>
+      <div class="fmt-row">
+        <label class="fmt-opt"><input type="checkbox" id="fmtPptx" checked/> PowerPoint (.pptx)</label>
+        <label class="fmt-opt"><input type="checkbox" id="fmtPdf" checked/> PDF (.pdf)</label>
+        <label class="fmt-opt"><input type="checkbox" id="fmtWord" checked/> Word (.docx)</label>
+      </div>
+    </div>
+
+    <!-- Product image upload -->
+    <div class="ig">
+      <div class="img-drop" id="imgDrop" onclick="document.getElementById('imgFile').click()">
+        <span style="font-size:18px">🖼️</span>
+        <div style="text-align:left">
+          <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">Product Image (optional)</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Upload your own image — overrides AI search</div>
+        </div>
+        <span style="margin-left:auto;font-size:12px;color:var(--text3)">📁 Upload</span>
+      </div>
+      <input type="file" id="imgFile" accept="image/*" style="display:none" onchange="handleImg(event)"/>
+    </div>
+
+    <!-- Brand style -->
+    <div class="ig">
+      <label class="il">Template</label>
+      <div class="style-tog">
+        <div class="stbtn on" id="stHk" onclick="setSt('hactel')">HACTEL Template</div>
+        <div class="stbtn" id="stCu" onclick="setSt('custom')">Custom Brand</div>
+      </div>
+    </div>
+
+    <!-- Custom fields (hidden by default) -->
+    <div id="customFields" style="display:none;margin-top:12px">
+      <div class="grid2">
+        <div class="ig"><label class="il">Brand Name</label><input class="inp" id="brandName" placeholder="Your Company"/></div>
+        <div class="ig"><label class="il">Brand Logo</label><div class="img-drop" onclick="document.getElementById('logoFile').click()" style="padding:10px"><span>📁 Upload logo</span></div><input type="file" id="logoFile" accept="image/*" style="display:none" onchange="handleLogo(event)"/></div>
+      </div>
+    </div>
+
+    <!-- Main input -->
+    <div style="display:flex;gap:10px;margin-bottom:4px">
+      <input class="inp big-inp" id="prodInput" style="flex:1" type="text" placeholder="e.g. C9200L-24T-4G-E or Cisco C9300-NM-4M" onkeydown="if(event.key==='Enter')runGen()"/>
+      <button class="btn-gold" id="genBtn" onclick="runGen()" style="white-space:nowrap">
+        <span id="genBtnTxt">⚡ Generate</span>
+      </button>
+    </div>
+
+    <!-- Progress -->
+    <div class="prog-box" id="progBox">
+      <div class="prog-step" id="ps1"><div class="s-dot">1</div>Detecting product and brand...</div>
+      <div class="prog-step" id="ps2"><div class="s-dot">2</div>Fetching real specs from manufacturer...</div>
+      <div class="prog-step" id="ps3"><div class="s-dot">3</div>Building HACTEL A4 portrait layout...</div>
+      <div class="prog-step" id="ps4"><div class="s-dot">4</div>Fetching product images...</div>
+      <div class="prog-step" id="ps5"><div class="s-dot">5</div>Adding footer, QR code, brand logo...</div>
+    </div>
+
+    <div class="err-box" id="errBox"></div>
+
+    <div class="res-box" id="resBox">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <span style="font-size:26px">✅</span>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:var(--green)">Datasheet Ready!</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px" id="resMeta"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:9px;flex-wrap:wrap" id="dlBtns"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ PDF→PPTX TOOL ═══ -->
+<div class="page z1" id="page-p2p" style="background:var(--bg)">
+<div class="tool-page">
+  <button class="tback" onclick="navTo('home')">← Back to Home</button>
+  <div class="tool-hdr">
+    <h2>📑 PDF → PowerPoint Converter</h2>
+    <p>Upload any PDF. AI reads the content and builds a professional PowerPoint presentation automatically.</p>
+  </div>
+
+  <!-- API Key -->
+  <div class="api-box">
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:11px">
+      <span style="font-size:17px">🔑</span>
+      <div><div style="font-size:13px;font-weight:700">OpenAI API Key</div><div style="font-size:11px;color:var(--text3)">Required for conversion.</div></div>
+    </div>
+    <div class="api-row">
+      <input type="password" class="api-inp" id="p2pApiKey" placeholder="sk-proj-..."/>
+      <button class="btn-gold btn-sm" onclick="saveKeyP2P()">Save</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="font-size:15px">📑 Convert PDF to PowerPoint</div>
+
+    <!-- PDF Upload -->
+    <div class="ig">
+      <div class="upload-zone" id="pdfZone" onclick="document.getElementById('pdfFile').click()">
+        <div class="icon">📄</div>
+        <h4>Upload PDF File</h4>
+        <p>Click to browse or drag & drop your PDF here</p>
+      </div>
+      <input type="file" id="pdfFile" accept=".pdf" style="display:none" onchange="handlePdf(event)"/>
+    </div>
+
+    <!-- Options -->
+    <div class="grid2">
+      <div class="ig">
+        <label class="il">Slide Theme</label>
+        <select class="inp" id="p2pTheme">
+          <option value="hactel">HACTEL (Black & Gold)</option>
+          <option value="dark">Dark Professional</option>
+          <option value="clean">Clean White</option>
+        </select>
+      </div>
+      <div class="ig">
+        <label class="il">Language</label>
+        <select class="inp" id="p2pLang">
+          <option value="same">Keep original language</option>
+          <option value="English">Translate to English</option>
+          <option value="French">Translate to French</option>
+          <option value="Arabic">Translate to Arabic</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn-gold" id="p2pBtn" onclick="runP2P()" style="width:100%;justify-content:center">
+      <span id="p2pBtnTxt">🔄 Convert to PowerPoint</span>
+    </button>
+
+    <div class="prog-box" id="p2pProg">
+      <div class="prog-step" id="pp1"><div class="s-dot">1</div>Reading PDF content...</div>
+      <div class="prog-step" id="pp2"><div class="s-dot">2</div>Extracting structure and sections...</div>
+      <div class="prog-step" id="pp3"><div class="s-dot">3</div>Building PowerPoint slides...</div>
+      <div class="prog-step" id="pp4"><div class="s-dot">4</div>Applying theme and formatting...</div>
+    </div>
+
+    <div class="err-box" id="p2pErr"></div>
+
+    <div class="res-box" id="p2pRes">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <span style="font-size:26px">✅</span>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:var(--green)">Conversion Complete!</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px" id="p2pMeta"></div>
+        </div>
+      </div>
+      <a class="btn-green" id="p2pDl" href="#" download>⬇ Download PPTX</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ TRANSLATOR TOOL ═══ -->
+<div class="page z1" id="page-trl" style="background:var(--bg)">
+<div class="tool-page">
+  <button class="tback" onclick="navTo('home')">← Back to Home</button>
+  <div class="tool-hdr">
+    <h2>🌍 Document Translator</h2>
+    <p>Translate any document between 20+ languages. Keep or change the output format.</p>
+  </div>
+
+  <!-- API Key -->
+  <div class="api-box">
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:11px">
+      <span style="font-size:17px">🔑</span>
+      <div><div style="font-size:13px;font-weight:700">OpenAI API Key</div><div style="font-size:11px;color:var(--text3)">Required for translation.</div></div>
+    </div>
+    <div class="api-row">
+      <input type="password" class="api-inp" id="trlApiKey" placeholder="sk-proj-..."/>
+      <button class="btn-gold btn-sm" onclick="saveKeyTrl()">Save</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="font-size:15px">🌍 Translate Your Document</div>
+
+    <!-- Input type -->
+    <div class="ig">
+      <label class="il">Input Type</label>
+      <div style="display:flex;gap:9px;flex-wrap:wrap">
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);cursor:pointer"><input type="radio" name="inType" value="text" checked style="accent-color:var(--gold1)"/> Plain Text</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);cursor:pointer"><input type="radio" name="inType" value="file" style="accent-color:var(--gold1)"/> Upload File (PDF/Word/TXT)</label>
+      </div>
+    </div>
+
+    <!-- Text input -->
+    <div class="ig" id="trlTextArea">
+      <label class="il">Text to Translate</label>
+      <textarea class="inp" id="trlText" rows="7" placeholder="Paste your text here..."></textarea>
+    </div>
+
+    <!-- File input -->
+    <div class="ig" id="trlFileArea" style="display:none">
+      <div class="upload-zone" id="trlZone" onclick="document.getElementById('trlFile').click()">
+        <div class="icon">📁</div>
+        <h4>Upload Document</h4>
+        <p>PDF, Word (.docx), or plain text (.txt)</p>
+      </div>
+      <input type="file" id="trlFile" accept=".pdf,.docx,.txt" style="display:none" onchange="handleTrlFile(event)"/>
+    </div>
+
+    <!-- Language pair -->
+    <div class="ig">
+      <label class="il">Translation</label>
+      <div class="lang-sel-row">
+        <select class="inp" id="trlFrom" style="flex:1">
+          <option value="auto">🔍 Auto-detect language</option>
+          <option value="English">English</option>
+          <option value="French">French</option>
+          <option value="Arabic">Arabic</option>
+          <option value="Spanish">Spanish</option>
+          <option value="German">German</option>
+          <option value="Italian">Italian</option>
+          <option value="Portuguese">Portuguese</option>
+          <option value="Russian">Russian</option>
+          <option value="Chinese">Chinese</option>
+          <option value="Japanese">Japanese</option>
+        </select>
+        <span class="lang-arrow">→</span>
+        <select class="inp" id="trlTo" style="flex:1">
+          <option value="French">French</option>
+          <option value="English">English</option>
+          <option value="Arabic">Arabic</option>
+          <option value="Spanish">Spanish</option>
+          <option value="German">German</option>
+          <option value="Italian">Italian</option>
+          <option value="Portuguese">Portuguese</option>
+          <option value="Russian">Russian</option>
+          <option value="Chinese">Chinese</option>
+          <option value="Japanese">Japanese</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Output format -->
+    <div class="ig">
+      <label class="il">Output Format</label>
+      <select class="inp" id="trlOutFmt" style="width:220px">
+        <option value="txt">Plain Text (.txt)</option>
+        <option value="docx">Word Document (.docx)</option>
+        <option value="pdf">PDF (via browser print)</option>
+      </select>
+    </div>
+
+    <button class="btn-gold" id="trlBtn" onclick="runTrl()" style="width:100%;justify-content:center">
+      <span id="trlBtnTxt">🌍 Translate Document</span>
+    </button>
+
+    <div class="prog-box" id="trlProg">
+      <div class="prog-step" id="tp1"><div class="s-dot">1</div>Reading document content...</div>
+      <div class="prog-step" id="tp2"><div class="s-dot">2</div>Detecting source language...</div>
+      <div class="prog-step" id="tp3"><div class="s-dot">3</div>Translating with AI...</div>
+      <div class="prog-step" id="tp4"><div class="s-dot">4</div>Formatting output...</div>
+    </div>
+
+    <div class="err-box" id="trlErr"></div>
+
+    <div class="res-box" id="trlRes">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <span style="font-size:26px">✅</span>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:var(--green)">Translation Complete!</div>
+          <div style="font-size:12px;color:var(--text3)" id="trlMeta"></div>
+        </div>
+      </div>
+      <div style="background:rgba(201,160,48,.05);border:1px solid var(--border);border-radius:10px;padding:14px;max-height:200px;overflow-y:auto;font-size:12px;color:var(--text2);line-height:1.7;white-space:pre-wrap;margin-bottom:12px" id="trlPreview"></div>
+      <a class="btn-green" id="trlDl" href="#" download>⬇ Download Translation</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ ABOUT ═══ -->
+<div class="page z1" id="page-about">
+  <div class="about-sec">
+    <div class="about-grid">
+      <div>
+        <div class="sec-eye">About HACTEL</div>
+        <div class="sec-h">Algeria's IT Solutions Leader</div>
+        <p class="sec-sub"><strong style="color:var(--text)">HACTEL</strong> is an Algerian company providing complete technology solutions — from initial study through to after-sales service.</p>
+        <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:16px">We cover security systems, computer networks, telephony, telecommunications, and electrical infrastructure, serving enterprise clients, government institutions, and businesses across Algeria.</p>
+        <div style="margin-bottom:18px">
+          <span class="tag">Network Infrastructure</span><span class="tag">Security Systems</span>
+          <span class="tag">Telephony</span><span class="tag">CCTV</span>
+          <span class="tag">Audiovisual</span><span class="tag">Fiber Optic</span>
+        </div>
+        <div style="font-size:13px;color:var(--text3);line-height:2.2">
+          <div>📍 Villa N°79, Lotissement D, Rue del Commune El Achour, Alger 16104</div>
+          <div>📞 +213 23 34 84 10 / +213 23 34 84 09</div>
+          <div>📱 +213 661 211 201 / 202 / 203</div>
+          <div>✉️ <a href="mailto:info@hactel.com" style="color:var(--gold2)">info@hactel.com</a></div>
+          <div>🌐 <a href="https://www.hactel.com" target="_blank" style="color:var(--gold2)">www.hactel.com</a></div>
+        </div>
+      </div>
+      <div class="about-logo-big"><img src="" id="about-logo" alt="HACTEL"/></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-ov" id="modalOv">
+  <div class="modal">
+    <div class="modal-hd"><h3 id="modalTitle">Preview</h3><button class="modal-close" onclick="closeModal()">×</button></div>
+    <div class="modal-bd" id="modalBd"></div>
+    <div class="modal-ft"><a class="btn-green" id="modalDl" href="#" download>⬇ Download</a><button class="btn-out btn-sm" onclick="closeModal()">Close</button></div>
+  </div>
+</div>
+
+<!-- CHATBOT -->
+<div class="chatbot">
+  <div class="chat-win" id="chatWin">
+    <div class="chat-hd">
+      <div class="chat-hd-av"><img src="" id="chat-av" alt="H"/></div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:700">HACTEL Assistant</div><div style="font-size:10px;color:var(--text3)">AI-powered</div></div>
+      <button class="chat-close" onclick="toggleChat()">×</button>
+    </div>
+    <div class="chat-msgs" id="chatMsgs"><div class="cmsg bot">Hello! I'm the HACTEL assistant. Ask me about products, services, or datasheets.</div></div>
+    <div class="chat-inp-row">
+      <input class="chat-text" id="chatInp" placeholder="Ask anything..." onkeydown="if(event.key==='Enter')sendChat()"/>
+      <button class="chat-send" onclick="sendChat()">➤</button>
+    </div>
+  </div>
+  <button class="chat-toggle" onclick="toggleChat()">💬</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+<script src="hactel_imgs.js"></script>
+
+<script>
+/* ══════════════════════════════════════
+   HACTEL INDEX.HTML — Main Application
+══════════════════════════════════════ */
+
+/* ── Auth Guard ── */
+(function(){
+  const ses = getSession();
+  if(!ses){ window.location.href='login.html'; return; }
+  // Inject Hacene's API key automatically
+  if(ses.id==='user_hacene'){
+    const k=SYS_KEYS.hacene;
+    localStorage.setItem('hk_k',k);
+    document.addEventListener('DOMContentLoaded',()=>{
+      const e=document.getElementById('apiKey');
+      if(e)e.value=k;
+    });
+  }
+})();
+
+/* ── 3D Background ── */
+(function(){
+  const canvas=document.getElementById('bg3d');
+  const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,1000);
+  camera.position.z=30;
+  function resize(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();}
+  resize();addEventListener('resize',resize);
+  const boxes=[];
+  for(let i=0;i<22;i++){
+    const geo=new THREE.BoxGeometry(1,1,1);
+    const mat=new THREE.MeshBasicMaterial({
+      color:i%3===0?0xC9A030:i%3===1?0x8B6A00:0x4A3800,
+      wireframe:true,transparent:true,opacity:0.05+Math.random()*0.07
+    });
+    const m=new THREE.Mesh(geo,mat);
+    const s=0.5+Math.random()*2.5;
+    m.scale.set(s,s,s);
+    m.position.set((Math.random()-.5)*60,(Math.random()-.5)*40,(Math.random()-.5)*18-8);
+    m.rotation.set(Math.random()*Math.PI,Math.random()*Math.PI,Math.random()*Math.PI);
+    m.userData={rx:(Math.random()-.5)*.003,ry:(Math.random()-.5)*.003,vx:(Math.random()-.5)*.0012,vy:(Math.random()-.5)*.0012};
+    scene.add(m);boxes.push(m);
+  }
+  const pgeo=new THREE.BufferGeometry();
+  const pos=new Float32Array(500*3);
+  for(let i=0;i<500*3;i++)pos[i]=(Math.random()-.5)*80;
+  pgeo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  scene.add(new THREE.Points(pgeo,new THREE.PointsMaterial({color:0xC9A030,size:0.04,transparent:true,opacity:0.3})));
+  let mx=0,my=0;
+  document.addEventListener('mousemove',e=>{mx=(e.clientX/innerWidth-.5)*.2;my=(e.clientY/innerHeight-.5)*.15;});
+  (function animate(){requestAnimationFrame(animate);camera.position.x+=(mx-camera.position.x)*.02;camera.position.y+=(-my-camera.position.y)*.02;boxes.forEach(b=>{b.rotation.x+=b.userData.rx;b.rotation.y+=b.userData.ry;b.position.x+=b.userData.vx;b.position.y+=b.userData.vy;if(Math.abs(b.position.x)>32)b.userData.vx*=-1;if(Math.abs(b.position.y)>22)b.userData.vy*=-1;});renderer.render(scene,camera);})();
+})();
+
+/* ── Cursor ── */
+const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
+document.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';ring.style.left=e.clientX+'px';ring.style.top=e.clientY+'px';});
+document.querySelectorAll('button,a,.tool-card-home').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.width='20px';cur.style.height='20px';});
+  el.addEventListener('mouseleave',()=>{cur.style.width='10px';cur.style.height='10px';});
+});
+
+/* ── Init ── */
+function init(){
+  // Load images
+  try{
+    if(typeof IMG_HACTEL_LOGO!=='undefined'){
+      document.getElementById('nav-logo').src=IMG_HACTEL_LOGO;
+      document.getElementById('about-logo').src=IMG_HACTEL_LOGO;
+      document.getElementById('chat-av').src=IMG_HACTEL_LOGO;
+    }
+  }catch(e){}
+  // Show nav
+  document.getElementById('mainNav').style.display='flex';
+  // User info
+  const ses=getSession();
+  if(ses){
+    const isAdmin=ses.role==='admin'||ses.role==='manager';
+    document.getElementById('nav-user-area').innerHTML=`
+      <div class="nav-user" onclick="${isAdmin?"window.location.href='admin.html'":"'#'"}">
+        <div class="nav-av">${(ses.name||'U')[0].toUpperCase()}</div>
+        <span class="nav-uname">${ses.name}</span>
+        ${isAdmin?'<span style="font-size:9px;background:rgba(201,160,48,.15);color:var(--gold2);padding:2px 7px;border-radius:4px;font-weight:700">'+ses.role.toUpperCase()+'</span>':''}
+        <span style="font-size:11px;color:var(--text3);margin-left:4px" onclick="event.stopPropagation();logout()">🚪</span>
+      </div>`;
+    // Restore API key
+    const key=currentApiKey();
+    if(key){
+      ['apiKey','p2pApiKey','trlApiKey'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=key;});
+    }
+    // Show scale bar if admin/manager
+    if(isAdmin){document.getElementById('scale-bar').classList.add('show');}
+  }
+  updateCredUI();
+  applyScale();
+  // Input type toggle for translator
+  document.querySelectorAll('input[name="inType"]').forEach(r=>r.addEventListener('change',function(){
+    document.getElementById('trlTextArea').style.display=this.value==='text'?'block':'none';
+    document.getElementById('trlFileArea').style.display=this.value==='file'?'block':'none';
+  }));
+}
+
+/* ── Nav ── */
+function navTo(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById('page-'+id).classList.add('on');
+  window.scrollTo(0,0);
+  if(id==='ds')updateCredUI();
+}
+
+/* ── Scale ── */
+function applyScale(){
+  const cfg=getCfg();
+  const scale=(cfg.homeScale||100)/100;
+  document.getElementById('page-home').style.fontSize=scale+'rem';
+  // Update active button
+  document.querySelectorAll('.scale-btn').forEach(b=>{
+    const v=parseInt(b.textContent);
+    b.classList.toggle('on',v===(cfg.homeScale||100));
+  });
+}
+function setScale(val){
+  saveCfg({homeScale:val});
+  applyScale();
+  showToast('Scale set to '+val+'%','ok');
+}
+
+/* ── Credits ── */
+function updateCredUI(){
+  const ses=getSession();
+  if(!ses)return;
+  // Get credits from builtin or user store
+  let creds=9999;
+  if(ses.id==='admin_khalil'||ses.id==='user_hacene'){creds=9999;}
+  else{const users=getUsers();const u=users.find(u=>u.id===ses.id);creds=u?u.credits:0;}
+  document.getElementById('credVal').textContent=creds+' credit'+(creds!==1?'s':'');
+  const pct=Math.min(100,(creds/200)*100);
+  document.getElementById('credFill').style.width=pct+'%';
+}
+
+/* ── API Key ── */
+function saveKey(){
+  const v=document.getElementById('apiKey').value.trim();
+  if(!v){showToast('Enter an API key','err');return;}
+  if(!v.startsWith('sk-')){showToast('Key must start with sk-','err');return;}
+  localStorage.setItem('hk_k',v);saveCfg({apiKey:v});
+  ['p2pApiKey','trlApiKey'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=v;});
+  showToast('API key saved ✓','ok');
+}
+function saveKeyP2P(){const v=document.getElementById('p2pApiKey').value.trim();if(v&&v.startsWith('sk-')){localStorage.setItem('hk_k',v);saveCfg({apiKey:v});showToast('Key saved ✓','ok');}else{showToast('Invalid key','err');}}
+function saveKeyTrl(){const v=document.getElementById('trlApiKey').value.trim();if(v&&v.startsWith('sk-')){localStorage.setItem('hk_k',v);saveCfg({apiKey:v});showToast('Key saved ✓','ok');}else{showToast('Invalid key','err');}}
+
+/* ── Image uploads ── */
+let userImgB64=null,logoB64=null;
+function handleImg(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{userImgB64=ev.target.result;document.getElementById('imgDrop').classList.add('has');document.getElementById('imgDrop').querySelector('span:last-child').textContent=f.name;showToast('Image loaded ✓','ok');};r.readAsDataURL(f);}
+function handleLogo(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{logoB64=ev.target.result;showToast('Logo loaded ✓','ok');};r.readAsDataURL(f);}
+function setSt(s){document.getElementById('stHk').classList.toggle('on',s==='hactel');document.getElementById('stCu').classList.toggle('on',s==='custom');document.getElementById('customFields').style.display=s==='custom'?'block':'none';}
+
+/* ── Helpers ── */
+function sl(ms){return new Promise(r=>setTimeout(r,ms));}
+function resetSteps(ids){ids.forEach(i=>{const el=document.getElementById(i);if(!el)return;el.className='prog-step';el.querySelector('.s-dot').textContent=i.replace(/\D/g,'');});}
+function setStep(id,st){const el=document.getElementById(id);if(!el)return;el.className='prog-step '+st;if(st==='done')el.querySelector('.s-dot').textContent='✓';}
+
+/* ════════════════════════════
+   DATASHEET GENERATOR
+════════════════════════════ */
+let lastResult=null;
+
+async function runGen(){
+  const code=document.getElementById('prodInput').value.trim();
+  if(!code){showToast('Enter a product model','err');return;}
+  const apiKey=currentApiKey()||document.getElementById('apiKey').value.trim();
+  if(!apiKey||!apiKey.startsWith('sk-')){showToast('Save your OpenAI API key first','err');return;}
+  const lang=document.getElementById('dsLang').value;
+
+  const btn=document.getElementById('genBtn');
+  btn.disabled=true;document.getElementById('genBtnTxt').textContent='Generating...';
+  document.getElementById('errBox').classList.remove('show');
+  document.getElementById('resBox').classList.remove('show');
+  document.getElementById('progBox').classList.add('show');
+  resetSteps(['ps1','ps2','ps3','ps4','ps5']);
+
+  try{
+    setStep('ps1','active');
+    const data=await callAI(code,apiKey,lang);
+    setStep('ps1','done');setStep('ps2','active');await sl(200);
+    setStep('ps2','done');setStep('ps3','active');await sl(200);
+    const imgB64=await getProductImg(code,apiKey);
+    setStep('ps3','done');setStep('ps4','active');await sl(200);
+    const pptxBlob=await buildPPTX(data,imgB64,code);
+    setStep('ps4','done');setStep('ps5','active');await sl(200);
+    setStep('ps5','done');
+
+    const fname=code.replace(/[^\w\-.]/g,'').trim()+'_HACTEL_Datasheet';
+    lastResult={data,pptxBlob,fname,code};
+
+    // Build download buttons based on formats selected
+    const dlArea=document.getElementById('dlBtns');
+    dlArea.innerHTML='';
+    if(document.getElementById('fmtPptx').checked){
+      const url=URL.createObjectURL(pptxBlob);
+      dlArea.innerHTML+=`<a class="btn-green" href="${url}" download="${fname}.pptx">⬇ PPTX</a>`;
+      document.getElementById('modalDl').href=url;document.getElementById('modalDl').download=fname+'.pptx';
+    }
+    if(document.getElementById('fmtWord').checked){
+      const docxBlob=await buildDocx(data,code);
+      const url2=URL.createObjectURL(docxBlob);
+      dlArea.innerHTML+=`<a class="btn-green" href="${url2}" download="${fname}.docx" style="background:#3B82F6">⬇ Word</a>`;
+    }
+    dlArea.innerHTML+=`<button class="btn-out btn-sm" onclick="showPreview()">👁 Preview</button>`;
+    dlArea.innerHTML+=`<button class="btn-out btn-sm" onclick="resetGen()">+ New</button>`;
+    document.getElementById('resMeta').textContent=`${data.product_category||''} · ${data.series||''} · A4 Portrait · ${lang}`;
+    document.getElementById('resBox').classList.add('show');
+    showToast('Datasheet ready ✓','ok');
+  }catch(err){
+    document.getElementById('errBox').textContent='⚠️ '+(err.message||'Unknown error. Check your API key.');
+    document.getElementById('errBox').classList.add('show');
+    showToast('Error — try again','err');
+    resetSteps(['ps1','ps2','ps3','ps4','ps5']);
+    console.error(err);
+  }finally{
+    btn.disabled=false;document.getElementById('genBtnTxt').textContent='⚡ Generate';
+  }
+}
+
+function resetGen(){document.getElementById('prodInput').value='';document.getElementById('resBox').classList.remove('show');document.getElementById('errBox').classList.remove('show');document.getElementById('progBox').classList.remove('show');userImgB64=null;}
+
+async function callAI(code,key,lang){
+  const sys=`You are an expert technical writer for HACTEL, an Algerian IT company.
+CRITICAL: Return ONLY valid JSON. No markdown, no explanation, no code blocks.
+Language for ALL content: ${lang}.
+Use REAL specifications from official manufacturer websites. NEVER invent specs.
+
+Detect brand from model number. Return EXACTLY this JSON structure:
+{
+  "product_category":"",
+  "series":"",
+  "title":"",
+  "model":"",
+  "brand":"",
+  "intro":"4-6 line enterprise technical introduction",
+  "intro_bold_terms":["term1","term2"],
+  "features":["feature 1","feature 2","feature 3","feature 4","feature 5"],
+  "spec_table":[{"param":"","value":""}],
+  "comparison":[{"code":"","description":"","devices":""}],
+  "tech_details":[{"parameter":"","value":""}],
+  "ordering":[{"part_number":"","description":""}],
+  "sources":[{"label":"","url":""}]
+}
+spec_table: 6-10 rows of REAL main specs (ports, speed, capacity, power, etc.)
+features: 4-6 real key features
+comparison: 2-3 real similar models with real part numbers
+tech_details: 6-8 rows: dimensions(mm), weight, temp range, power consumption, certifications
+ordering: 1-4 real orderable SKUs`;
+
+  const resp=await fetch('https://api.openai.com/v1/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+    body:JSON.stringify({
+      model:'gpt-4o',temperature:0.1,max_tokens:3500,
+      response_format:{type:'json_object'},
+      messages:[{role:'system',content:sys},{role:'user',content:'Generate professional HACTEL datasheet for: '+code}]
+    })
+  });
+  if(!resp.ok){const e=await resp.json().catch(()=>{});throw new Error(e?.error?.message||'API error '+resp.status);}
+  const d=await resp.json();
+  const raw=d.choices?.[0]?.message?.content;
+  if(!raw)throw new Error('Empty AI response');
+  try{return JSON.parse(raw);}catch{return JSON.parse(raw.replace(/```json|```/g,'').trim());}
+}
+
+async function getProductImg(code,apiKey){
+  if(userImgB64)return userImgB64;
+  // Try Wikipedia
+  try{
+    const api=`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(code)}&prop=pageimages&format=json&pithumbsize=800&origin=*`;
+    const r=await fetch(api,{signal:AbortSignal.timeout(5000)});
+    if(r.ok){const d=await r.json();const pages=Object.values(d?.query?.pages||{});const src=pages[0]?.thumbnail?.source;
+      if(src){const img=await loadImgB64(src);if(img)return img;}
+    }
+  }catch(e){}
+  // Try DALL-E
+  if(apiKey){
+    try{
+      const r=await fetch('https://api.openai.com/v1/images/generations',{
+        method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+        body:JSON.stringify({model:'dall-e-3',prompt:`Professional studio product photo of ${code}, clean white background, enterprise IT hardware, sharp detail, no text, no watermarks`,n:1,size:'1024x1024',response_format:'b64_json'})
+      });
+      if(r.ok){const d=await r.json();const b64=d?.data?.[0]?.b64_json;if(b64)return'data:image/png;base64,'+b64;}
+    }catch(e){}
+  }
+  return canvasPng(code);
+}
+
+function loadImgB64(src){
+  return new Promise(res=>{
+    const img=new Image();img.crossOrigin='anonymous';
+    img.onload=()=>{try{const c=document.createElement('canvas');c.width=800;c.height=500;const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,800,500);const sc=Math.min(800/img.width,500/img.height);const w=img.width*sc,h=img.height*sc;ctx.drawImage(img,(800-w)/2,(500-h)/2,w,h);res(c.toDataURL('image/png'));}catch(e){res(null);}};
+    img.onerror=()=>res(null);setTimeout(()=>res(null),7000);img.src=src;
+  });
+}
+
+function canvasPng(name){
+  const W=800,H=500,c=document.createElement('canvas');c.width=W;c.height=H;
+  const ctx=c.getContext('2d');
+  const gr=ctx.createLinearGradient(0,0,W,H);gr.addColorStop(0,'#0F1B2E');gr.addColorStop(1,'#1E3558');
+  ctx.fillStyle=gr;ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(201,160,48,0.08)';ctx.lineWidth=1;
+  for(let x=0;x<=W;x+=60){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<=H;y+=60){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  ctx.fillStyle='rgba(255,255,255,.08)';ctx.beginPath();ctx.roundRect(160,90,480,290,14);ctx.fill();
+  ctx.fillStyle='rgba(201,160,48,.5)';ctx.font='bold 22px Arial';ctx.textAlign='center';ctx.fillText(name.length>28?name.slice(0,28)+'…':name,W/2,310);
+  ctx.fillStyle='rgba(255,255,255,.35)';ctx.font='13px Arial';ctx.fillText('Upload product image for best results',W/2,338);
+  return c.toDataURL('image/png');
+}
+
+/* ════════════════════════════
+   PPTX BUILDER — EXACT HACTEL TEMPLATE
+   Layout: A4 portrait 7.5 × 10.6 inches
+   Fonts: Poppins Bold (titles), Calibri (body)
+   Colors: black header, gold accents, white body
+════════════════════════════ */
+async function buildPPTX(data,imgB64,productCode){
+  const prs=new PptxGenJS();
+  prs.defineLayout({name:'A4P',width:7.5,height:10.6});
+  prs.layout='A4P';
+  const FT='Poppins';const FB='Calibri';
+  const TH='333333';const TA='F5F5F5';
+
+  // Brand logo
+  let brandLogo=IMG_CISCO_LOGO;
+  const brand=(data.brand||'').toLowerCase();
+  if(!brand.includes('cisco'))brandLogo=null;
+
+  function addHeader(sl){
+    sl.addShape(prs.ShapeType.rect,{x:0,y:0,w:7.5,h:0.7,fill:{color:'000000'},line:{color:'000000'}});
+    sl.addText(data.series||'',{x:0.18,y:0.04,w:5.8,h:0.32,fontSize:13,bold:true,color:'FFFFFF',fontFace:FT,valign:'middle'});
+    sl.addText(data.model||data.title||'',{x:0.18,y:0.38,w:5.8,h:0.28,fontSize:10,color:'CCCCCC',fontFace:FB,valign:'middle'});
+    try{sl.addImage({data:IMG_HACTEL_LOGO,x:6.05,y:0.05,w:1.2,h:0.6,sizing:{type:'contain',w:1.2,h:0.6}});}catch(e){}
+    sl.addShape(prs.ShapeType.rect,{x:0,y:0.7,w:7.5,h:0.018,fill:{color:'C9A030'},line:{color:'C9A030'}});
+  }
+
+  function addFooter(sl,pg){
+    sl.addShape(prs.ShapeType.rect,{x:0,y:9.8,w:7.5,h:0.8,fill:{color:'F8F8F8'},line:{color:'DDDDDD',width:0.5}});
+    sl.addShape(prs.ShapeType.rect,{x:0,y:9.8,w:7.5,h:0.016,fill:{color:'C9A030'},line:{color:'C9A030'}});
+    try{sl.addImage({data:IMG_CONTACT_INFO,x:0.18,y:9.84,w:5.8,h:0.7,sizing:{type:'contain',w:5.8,h:0.7}});}catch(e){}
+    try{sl.addImage({data:IMG_QR_CODE,x:6.2,y:9.84,w:0.58,h:0.7,sizing:{type:'contain',w:0.58,h:0.7}});}catch(e){}
+    sl.addText('-0'+pg+'-',{x:7.1,y:9.84,w:0.3,h:0.7,fontSize:8,color:'888888',fontFace:FB,align:'center',valign:'middle'});
+  }
+
+  function addModelRef(sl){
+    sl.addText(data.model||'',{x:0.18,y:0.78,w:7.14,h:0.26,fontSize:10,bold:true,color:'000000',fontFace:FT,valign:'middle'});
+    sl.addShape(prs.ShapeType.rect,{x:0.18,y:1.06,w:7.14,h:0.014,fill:{color:'C9A030'},line:{color:'C9A030'}});
+  }
+
+  function tbl2col(sl,rows,x,y,w,h1,h2){
+    if(!rows||!rows.length)return 0;
+    const td=[[
+      {text:h1,options:{bold:true,color:'FFFFFF',fill:{color:TH},fontFace:FB,fontSize:9.5,align:'left',valign:'middle',margin:[2,5,2,5]}},
+      {text:h2,options:{bold:true,color:'FFFFFF',fill:{color:TH},fontFace:FB,fontSize:9.5,align:'left',valign:'middle',margin:[2,5,2,5]}}
+    ]];
+    rows.forEach((r,i)=>{
+      const fill={color:i%2===0?'FFFFFF':TA};
+      td.push([
+        {text:r.param||r.label||r.parameter||'',options:{bold:true,color:'000000',fill,fontFace:FB,fontSize:9,align:'left',valign:'middle',margin:[2,5,2,5]}},
+        {text:r.value||'',options:{color:'333333',fill,fontFace:FB,fontSize:9,align:'left',valign:'middle',margin:[2,5,2,5]}}
+      ]);
+    });
+    sl.addTable(td,{x,y,w,colW:[2.8,4.34],rowH:0.25,border:{type:'solid',pt:0.5,color:'CCCCCC'}});
+    return 0.26*(rows.length+1);
+  }
+
+  function tbl3col(sl,rows,x,y,w){
+    if(!rows||!rows.length)return 0;
+    const td=[[
+      {text:'Product Code',options:{bold:true,color:'FFFFFF',fill:{color:TH},fontFace:FB,fontSize:9.5,align:'left',valign:'middle',margin:[2,5,2,5]}},
+      {text:'Description',options:{bold:true,color:'FFFFFF',fill:{color:TH},fontFace:FB,fontSize:9.5,align:'left',valign:'middle',margin:[2,5,2,5]}},
+      {text:'Supported Devices',options:{bold:true,color:'FFFFFF',fill:{color:TH},fontFace:FB,fontSize:9.5,align:'left',valign:'middle',margin:[2,5,2,5]}}
+    ]];
+    rows.forEach((r,i)=>{
+      const fill={color:i%2===0?'FFFFFF':TA};
+      td.push([
+        {text:r.code||'',options:{bold:true,color:'000000',fill,fontFace:FB,fontSize:9,align:'left',valign:'middle',margin:[2,5,2,5]}},
+        {text:r.description||'',options:{color:'333333',fill,fontFace:FB,fontSize:9,align:'left',valign:'middle',margin:[2,5,2,5]}},
+        {text:r.devices||'',options:{color:'333333',fill,fontFace:FB,fontSize:9,align:'left',valign:'middle',margin:[2,5,2,5]}}
+      ]);
+    });
+    sl.addTable(td,{x,y,w,colW:[1.6,3.2,2.34],rowH:0.25,border:{type:'solid',pt:0.5,color:'CCCCCC'}});
+    return 0.26*(rows.length+1);
+  }
+
+  // ── SLIDE 1 ──
+  const s1=prs.addSlide();s1.background={color:'FFFFFF'};
+  addHeader(s1);addModelRef(s1);
+  // Product images
+  s1.addImage({data:imgB64,x:3.8,y:1.16,w:3.5,h:2.5,sizing:{type:'contain',w:3.5,h:2.5}});
+  s1.addImage({data:imgB64,x:0.18,y:3.84,w:7.14,h:1.65,sizing:{type:'contain',w:7.14,h:1.65}});
+  // Introduction
+  s1.addText('Introduction :',{x:0.18,y:5.65,w:3,h:0.28,fontSize:10,bold:true,color:'000000',fontFace:FT});
+  s1.addText(data.intro||'',{x:0.18,y:5.97,w:7.14,h:3.55,fontSize:9.5,color:'333333',fontFace:FB,lineSpacingMultiple:1.55,valign:'top'});
+  if(brandLogo){try{s1.addImage({data:brandLogo,x:5.7,y:9.2,w:1.5,h:0.45,sizing:{type:'contain',w:1.5,h:0.45}});}catch(e){}}
+  addFooter(s1,1);
+
+  // ── SLIDE 2 ──
+  const s2=prs.addSlide();s2.background={color:'FFFFFF'};
+  addHeader(s2);addModelRef(s2);
+  s2.addText('Specifications:',{x:0.18,y:1.16,w:7.14,h:0.28,fontSize:10,bold:true,color:'000000',fontFace:FT});
+  // Bullet features
+  const feats=data.features||[];
+  if(feats.length){
+    const items=feats.map((f,i)=>({text:f,options:{bullet:true,breakLine:i<feats.length-1,fontSize:9,color:'333333',fontFace:FB}}));
+    s2.addText(items,{x:0.22,y:1.48,w:7.1,h:feats.length*0.22+0.1,valign:'top'});
+  }
+  // Spec table
+  const specY=1.48+feats.length*0.22+0.26;
+  s2.addText((data.model||'')+' Specification',{x:0.18,y:specY,w:7.14,h:0.26,fontSize:9.5,bold:true,color:'000000',fontFace:FT});
+  const specH=tbl2col(s2,data.spec_table||[],0.18,specY+0.3,7.14,'Feature','Value');
+  // Compare table
+  const compY=specY+0.3+specH+0.28;
+  s2.addText('Compare to Similar Items',{x:0.18,y:compY,w:7.14,h:0.26,fontSize:9.5,bold:true,color:'333333',fontFace:FT});
+  const compSub=`Table 2 shows the comparison between ${data.model||''} and similar products.`;
+  s2.addText(compSub,{x:0.18,y:compY+0.28,w:7.14,h:0.22,fontSize:8.5,color:'666666',fontFace:FB});
+  tbl3col(s2,data.comparison||[],0.18,compY+0.54,7.14);
+  s2.addText(data.series||'',{x:0.18,y:9.48,w:4,h:0.18,fontSize:8,bold:true,color:'000000',fontFace:FT});
+  if(brandLogo){try{s2.addImage({data:brandLogo,x:5.7,y:9.2,w:1.5,h:0.45,sizing:{type:'contain',w:1.5,h:0.45}});}catch(e){}}
+  addFooter(s2,2);
+
+  // ── SLIDE 3: Tech Details ──
+  if((data.tech_details||[]).length>0){
+    const s3=prs.addSlide();s3.background={color:'FAFAFA'};
+    addHeader(s3);addModelRef(s3);
+    s3.addText('Technical Details',{x:0.18,y:1.16,w:7.14,h:0.28,fontSize:10,bold:true,color:'000000',fontFace:FT});
+    const tdH=tbl2col(s3,data.tech_details,0.18,1.48,7.14,'Parameter','Value');
+    // Ordering info
+    if((data.ordering||[]).length){
+      const ordY=1.48+tdH+0.28;
+      s3.addText('Ordering Information',{x:0.18,y:ordY,w:7.14,h:0.26,fontSize:9.5,bold:true,color:'000000',fontFace:FT});
+      tbl2col(s3,data.ordering.map(o=>({param:o.part_number,value:o.description})),0.18,ordY+0.3,7.14,'Part Number','Description');
+    }
+    // Sources
+    if((data.sources||[]).length){
+      s3.addShape(prs.ShapeType.rect,{x:0.18,y:8.95,w:7.14,h:0.013,fill:{color:'CCCCCC'},line:{color:'CCCCCC'}});
+      s3.addText('Sources: '+data.sources.map(s=>s.label+': '+s.url).join(' | '),{x:0.18,y:9.0,w:7.14,h:0.3,fontSize:6.5,color:'888888',fontFace:FB,lineSpacingMultiple:1.4});
+    }
+    s3.addText(data.series||'',{x:0.18,y:9.48,w:4,h:0.18,fontSize:8,bold:true,color:'000000',fontFace:FT});
+    if(brandLogo){try{s3.addImage({data:brandLogo,x:5.7,y:9.2,w:1.5,h:0.45,sizing:{type:'contain',w:1.5,h:0.45}});}catch(e){}}
+    addFooter(s3,3);
+  }
+
+  return await prs.write({outputType:'blob'});
+}
+
+/* ── Basic DOCX Builder ── */
+async function buildDocx(data,code){
+  // Simple HTML-based docx using Blob
+  let html=`<html><head><style>
+    body{font-family:Calibri,Arial;font-size:11pt;color:#333}
+    h1{font-size:18pt;font-weight:bold;color:#000;margin:0 0 4px}
+    h2{font-size:13pt;font-weight:bold;color:#000;margin:16px 0 6px}
+    h3{font-size:11pt;font-weight:bold;color:#333;margin:12px 0 4px}
+    table{width:100%;border-collapse:collapse;margin-bottom:12px}
+    th{background:#333;color:#fff;padding:5px 8px;text-align:left;font-size:10pt}
+    td{padding:5px 8px;border-bottom:1px solid #ddd;font-size:10pt}
+    tr:nth-child(even) td{background:#f5f5f5}
+    p{line-height:1.6;margin:6px 0}
+    .gold{color:#C9A030}
+    .footer{margin-top:30px;padding-top:10px;border-top:2px solid #C9A030;font-size:9pt;color:#888}
+  </style></head><body>
+  <h1>${data.series||''}</h1>
+  <p class="gold" style="font-size:12pt;font-weight:bold">${data.model||''}</p>
+  <p style="color:#888;font-size:9pt">HACTEL · Algeria · info@hactel.com · www.hactel.com</p>
+  <hr style="border-color:#C9A030;margin:12px 0"/>
+  <h2>Introduction</h2>
+  <p>${data.intro||''}</p>
+  <h2>Specifications</h2>
+  <ul>${(data.features||[]).map(f=>'<li>'+f+'</li>').join('')}</ul>
+  <h3>${data.model} Specification</h3>
+  <table><tr><th>Feature</th><th>Value</th></tr>${(data.spec_table||[]).map((r,i)=>`<tr><td><b>${r.param||''}</b></td><td>${r.value||''}</td></tr>`).join('')}</table>
+  <h2>Compare to Similar Items</h2>
+  <table><tr><th>Product Code</th><th>Description</th><th>Supported Devices</th></tr>${(data.comparison||[]).map(r=>`<tr><td><b>${r.code||''}</b></td><td>${r.description||''}</td><td>${r.devices||''}</td></tr>`).join('')}</table>
+  <h2>Technical Details</h2>
+  <table><tr><th>Parameter</th><th>Value</th></tr>${(data.tech_details||[]).map(r=>`<tr><td><b>${r.parameter||''}</b></td><td>${r.value||''}</td></tr>`).join('')}</table>
+  <h2>Ordering Information</h2>
+  <table><tr><th>Part Number</th><th>Description</th></tr>${(data.ordering||[]).map(r=>`<tr><td><b>${r.part_number||''}</b></td><td>${r.description||''}</td></tr>`).join('')}</table>
+  <div class="footer">
+    <b>HACTEL</b> · Villa N°79, Lotissement D, Rue del Commune El Achour, Alger 16104<br/>
+    Mobile: +213 661 211 201 · Phone: +213 23 34 84 10 · Email: info@hactel.com · Website: www.hactel.com
+  </div></body></html>`;
+  return new Blob([html],{type:'application/vnd.ms-word'});
+}
+
+/* ── Preview ── */
+function showPreview(){
+  if(!lastResult)return;
+  const d=lastResult.data;
+  document.getElementById('modalTitle').textContent=d.model||'Preview';
+  document.getElementById('modalBd').innerHTML=`
+    <div class="prev-lbl">Introduction</div>
+    <div style="font-size:12px;color:var(--text2);line-height:1.7;background:rgba(201,160,48,.05);padding:12px;border-radius:9px;border-left:3px solid var(--gold1)">${d.intro||''}</div>
+    <div class="prev-lbl">Specifications</div>
+    <table class="prev-tbl"><tr><th>Feature</th><th>Value</th></tr>${(d.spec_table||[]).map(r=>`<tr><td><b>${r.param||''}</b></td><td>${r.value||''}</td></tr>`).join('')}</table>
+    <div class="prev-lbl">Technical Details</div>
+    <table class="prev-tbl"><tr><th>Parameter</th><th>Value</th></tr>${(d.tech_details||[]).map(r=>`<tr><td><b>${r.parameter||''}</b></td><td>${r.value||''}</td></tr>`).join('')}</table>
+    <div class="prev-lbl">Ordering</div>
+    <table class="prev-tbl"><tr><th>Part Number</th><th>Description</th></tr>${(d.ordering||[]).map(r=>`<tr><td><b>${r.part_number||''}</b></td><td>${r.description||''}</td></tr>`).join('')}</table>`;
+  document.getElementById('modalOv').classList.add('open');
+}
+function closeModal(){document.getElementById('modalOv').classList.remove('open');}
+document.getElementById('modalOv').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+/* ════════════════════════════
+   PDF → PPTX CONVERTER
+════════════════════════════ */
+let pdfB64=null,pdfName='document';
+
+function handlePdf(e){
+  const f=e.target.files[0];if(!f)return;
+  pdfName=f.name.replace('.pdf','');
+  const r=new FileReader();
+  r.onload=ev=>{
+    pdfB64=ev.target.result.split(',')[1];
+    const zone=document.getElementById('pdfZone');
+    zone.classList.add('has');
+    zone.querySelector('h4').textContent=f.name;
+    zone.querySelector('p').textContent=Math.round(f.size/1024)+'KB · Ready to convert';
+    showToast('PDF loaded ✓','ok');
+  };r.readAsDataURL(f);
+}
+
+async function runP2P(){
+  if(!pdfB64){showToast('Upload a PDF first','err');return;}
+  const apiKey=currentApiKey()||document.getElementById('p2pApiKey').value.trim();
+  if(!apiKey||!apiKey.startsWith('sk-')){showToast('Save your OpenAI API key first','err');return;}
+  const theme=document.getElementById('p2pTheme').value;
+  const lang=document.getElementById('p2pLang').value;
+
+  const btn=document.getElementById('p2pBtn');
+  btn.disabled=true;document.getElementById('p2pBtnTxt').textContent='Converting...';
+  document.getElementById('p2pErr').classList.remove('show');
+  document.getElementById('p2pRes').classList.remove('show');
+  document.getElementById('p2pProg').classList.add('show');
+  resetSteps(['pp1','pp2','pp3','pp4']);
+
+  try{
+    setStep('pp1','active');
+    // Send PDF to AI for content extraction
+    const sysPrompt=`You are an expert at converting PDF content to PowerPoint slides.
+Extract ALL content from the PDF and organize it into slides.
+Return ONLY valid JSON:
+{
+  "title":"presentation title",
+  "subtitle":"subtitle or description",
+  "slides":[
+    {
+      "title":"slide title",
+      "type":"title|content|bullets|image_placeholder|table",
+      "content":"main text content",
+      "bullets":["bullet 1","bullet 2"],
+      "table":{"headers":["col1","col2"],"rows":[["r1c1","r1c2"]]}
+    }
+  ]
+}
+Create 5-15 slides covering all major sections. Make it professional and complete.
+${lang!=='same'?'Translate all content to '+lang+'.':'Keep original language.'}`;
+
+    const resp=await fetch('https://api.openai.com/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+      body:JSON.stringify({
+        model:'gpt-4o',max_tokens:4000,temperature:0.2,
+        response_format:{type:'json_object'},
+        messages:[{role:'system',content:sysPrompt},
+          {role:'user',content:[
+            {type:'text',text:'Convert this PDF to PowerPoint slides:'},
+            {type:'document',source:{type:'base64',media_type:'application/pdf',data:pdfB64}}
+          ]}
+        ]
+      })
+    });
+    if(!resp.ok){const e=await resp.json().catch(()=>{});throw new Error(e?.error?.message||'API error '+resp.status);}
+    const d=await resp.json();
+    const raw=d.choices?.[0]?.message?.content;
+    if(!raw)throw new Error('No response from AI');
+    const pdata=JSON.parse(raw.replace(/```json|```/g,'').trim());
+
+    setStep('pp1','done');setStep('pp2','active');await sl(200);
+    setStep('pp2','done');setStep('pp3','active');await sl(200);
+
+    // Build PPTX
+    const blob=await buildP2PPPTX(pdata,theme);
+    setStep('pp3','done');setStep('pp4','active');await sl(200);
+    setStep('pp4','done');
+
+    const url=URL.createObjectURL(blob);
+    document.getElementById('p2pDl').href=url;
+    document.getElementById('p2pDl').download=pdfName+'_converted.pptx';
+    document.getElementById('p2pMeta').textContent=`${pdata.slides?.length||0} slides · ${pdata.title}`;
+    document.getElementById('p2pRes').classList.add('show');
+    showToast('Conversion complete ✓','ok');
+  }catch(err){
+    document.getElementById('p2pErr').textContent='⚠️ '+(err.message||'Conversion failed. Check your API key.');
+    document.getElementById('p2pErr').classList.add('show');
+    showToast('Error','err');
+    resetSteps(['pp1','pp2','pp3','pp4']);
+    console.error(err);
+  }finally{
+    btn.disabled=false;document.getElementById('p2pBtnTxt').textContent='🔄 Convert to PowerPoint';
+  }
+}
+
+async function buildP2PPPTX(pdata,theme){
+  const prs=new PptxGenJS();
+  prs.defineLayout({name:'WIDE',width:10,height:5.63});
+  prs.layout='WIDE';
+
+  // Theme colors
+  const themes={
+    hactel:{bg:'0A0800',hdr:'000000',acc:'C9A030',txt:'F5F0E8',sub:'C4B896',dark:true},
+    dark:{bg:'1B2F4E',hdr:'0E2244',acc:'4A9EFF',txt:'E8F4FF',sub:'8AAAC8',dark:true},
+    clean:{bg:'FFFFFF',hdr:'1B2F4E',acc:'2E6CB8',txt:'1A1A1A',sub:'666666',dark:false}
+  };
+  const T=themes[theme]||themes.hactel;
+
+  // Title slide
+  const ts=prs.addSlide();ts.background={color:T.bg};
+  ts.addShape(prs.ShapeType.rect,{x:0,y:0,w:10,h:5.63,fill:{color:T.hdr},line:{color:T.hdr}});
+  ts.addShape(prs.ShapeType.rect,{x:0,y:5.1,w:10,h:0.04,fill:{color:T.acc},line:{color:T.acc}});
+  ts.addText(pdata.title||'Presentation',{x:0.5,y:1.5,w:9,h:1.4,fontSize:36,bold:true,color:T.txt,fontFace:'Poppins,Arial',align:'center'});
+  ts.addText(pdata.subtitle||'',{x:0.5,y:3.0,w:9,h:0.8,fontSize:16,color:T.sub,fontFace:'Calibri,Arial',align:'center'});
+  ts.addText('HACTEL · info@hactel.com · www.hactel.com',{x:0.5,y:4.8,w:9,h:0.3,fontSize:9,color:T.acc,fontFace:'Calibri,Arial',align:'center'});
+
+  // Content slides
+  for(const sl of (pdata.slides||[])){
+    const s=prs.addSlide();s.background={color:T.bg};
+    // Header bar
+    s.addShape(prs.ShapeType.rect,{x:0,y:0,w:10,h:0.65,fill:{color:T.hdr},line:{color:T.hdr}});
+    s.addShape(prs.ShapeType.rect,{x:0,y:0.65,w:10,h:0.03,fill:{color:T.acc},line:{color:T.acc}});
+    s.addText(sl.title||'',{x:0.25,y:0.1,w:9.5,h:0.45,fontSize:16,bold:true,color:T.txt,fontFace:'Poppins,Arial',valign:'middle'});
+    // Content
+    const cy=0.85;
+    if(sl.bullets&&sl.bullets.length){
+      const items=sl.bullets.map((b,i)=>({text:b,options:{bullet:true,breakLine:i<sl.bullets.length-1,fontSize:13,color:T.txt,fontFace:'Calibri,Arial'}}));
+      s.addText(items,{x:0.35,y:cy,w:9.3,h:4.4,valign:'top'});
+    }else if(sl.table&&sl.table.headers){
+      const td=[[...sl.table.headers.map(h=>({text:h,options:{bold:true,color:'FFFFFF',fill:{color:T.hdr},fontFace:'Calibri',fontSize:11,align:'left',valign:'middle',margin:[3,6,3,6]}}))]];
+      (sl.table.rows||[]).forEach((row,ri)=>{
+        td.push(row.map(cell=>({text:cell,options:{color:T.dark?T.txt:'333333',fill:{color:ri%2===0?'FFFFFF':'F0F0F0'},fontFace:'Calibri',fontSize:11,align:'left',valign:'middle',margin:[3,6,3,6]}})));
+      });
+      s.addTable(td,{x:0.3,y:cy,w:9.4,rowH:0.3,border:{type:'solid',pt:0.5,color:'CCCCCC'}});
+    }else if(sl.content){
+      s.addText(sl.content,{x:0.35,y:cy,w:9.3,h:4.4,fontSize:13,color:T.txt,fontFace:'Calibri,Arial',valign:'top',lineSpacingMultiple:1.55});
+    }
+    // Footer
+    s.addShape(prs.ShapeType.rect,{x:0,y:5.35,w:10,h:0.03,fill:{color:T.acc},line:{color:T.acc}});
+    s.addText('HACTEL · www.hactel.com',{x:0.3,y:5.38,w:5,h:0.22,fontSize:8,color:T.sub,fontFace:'Calibri,Arial'});
+  }
+
+  return await prs.write({outputType:'blob'});
+}
+
+/* ════════════════════════════
+   DOCUMENT TRANSLATOR
+════════════════════════════ */
+let trlFileB64=null,trlFileType='txt';
+
+function handleTrlFile(e){
+  const f=e.target.files[0];if(!f)return;
+  trlFileType=f.name.split('.').pop().toLowerCase();
+  const r=new FileReader();
+  r.onload=ev=>{
+    if(trlFileType==='txt'){trlFileB64=null;document.getElementById('trlText').value=ev.target.result;}
+    else{trlFileB64=ev.target.result.split(',')[1];}
+    const zone=document.getElementById('trlZone');
+    zone.classList.add('has');zone.querySelector('h4').textContent=f.name;
+    showToast('File loaded ✓','ok');
+  };
+  if(trlFileType==='txt')r.readAsText(f);else r.readAsDataURL(f);
+}
+
+async function runTrl(){
+  const apiKey=currentApiKey()||document.getElementById('trlApiKey').value.trim();
+  if(!apiKey||!apiKey.startsWith('sk-')){showToast('Save your OpenAI API key first','err');return;}
+  const inType=document.querySelector('input[name="inType"]:checked').value;
+  const from=document.getElementById('trlFrom').value;
+  const to=document.getElementById('trlTo').value;
+  const outFmt=document.getElementById('trlOutFmt').value;
+  let textContent='';
+
+  if(inType==='text'){
+    textContent=document.getElementById('trlText').value.trim();
+    if(!textContent){showToast('Enter text to translate','err');return;}
+  }else{
+    if(!trlFileB64&&!textContent){showToast('Upload a file first','err');return;}
+  }
+
+  const btn=document.getElementById('trlBtn');
+  btn.disabled=true;document.getElementById('trlBtnTxt').textContent='Translating...';
+  document.getElementById('trlErr').classList.remove('show');
+  document.getElementById('trlRes').classList.remove('show');
+  document.getElementById('trlProg').classList.add('show');
+  resetSteps(['tp1','tp2','tp3','tp4']);
+
+  try{
+    setStep('tp1','active');await sl(200);
+    setStep('tp1','done');setStep('tp2','active');await sl(200);
+    setStep('tp2','done');setStep('tp3','active');
+
+    const sysPrompt=`You are a professional translator. Translate the provided text from ${from==='auto'?'the detected language':from} to ${to}. Preserve the original formatting, structure, paragraph breaks, and tone as much as possible. Return ONLY the translated text, nothing else.`;
+
+    let messages=[{role:'system',content:sysPrompt}];
+    if(trlFileB64&&inType==='file'){
+      const mediaType=trlFileType==='pdf'?'application/pdf':'application/octet-stream';
+      messages.push({role:'user',content:[
+        {type:'text',text:'Translate this document:'},
+        {type:'document',source:{type:'base64',media_type:mediaType,data:trlFileB64}}
+      ]});
+    }else{
+      messages.push({role:'user',content:'Translate this text:\n\n'+textContent});
+    }
+
+    const resp=await fetch('https://api.openai.com/v1/chat/completions',{
+      method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+      body:JSON.stringify({model:'gpt-4o',max_tokens:4000,temperature:0.1,messages})
+    });
+    if(!resp.ok){const e=await resp.json().catch(()=>{});throw new Error(e?.error?.message||'API error '+resp.status);}
+    const d=await resp.json();
+    const translated=d.choices?.[0]?.message?.content||'';
+    if(!translated)throw new Error('Empty translation response');
+
+    setStep('tp3','done');setStep('tp4','active');await sl(200);setStep('tp4','done');
+
+    // Create download file
+    let dlBlob,dlName,dlExt;
+    if(outFmt==='docx'){
+      const html=`<html><body style="font-family:Calibri;font-size:11pt;line-height:1.6">${translated.split('\n').map(l=>'<p>'+l+'</p>').join('')}</body></html>`;
+      dlBlob=new Blob([html],{type:'application/vnd.ms-word'});dlExt='docx';
+    }else{
+      dlBlob=new Blob([translated],{type:'text/plain;charset=utf-8'});dlExt='txt';
+    }
+    dlName=`translation_${to}_${Date.now()}.${dlExt}`;
+
+    document.getElementById('trlPreview').textContent=translated.slice(0,500)+(translated.length>500?'\n\n[... truncated for preview ...]':'');
+    const url=URL.createObjectURL(dlBlob);
+    document.getElementById('trlDl').href=url;document.getElementById('trlDl').download=dlName;
+    document.getElementById('trlMeta').textContent=`Translated to ${to} · ${translated.length} characters`;
+    document.getElementById('trlRes').classList.add('show');
+    showToast('Translation complete ✓','ok');
+  }catch(err){
+    document.getElementById('trlErr').textContent='⚠️ '+(err.message||'Translation failed. Check your API key.');
+    document.getElementById('trlErr').classList.add('show');
+    showToast('Error','err');
+    resetSteps(['tp1','tp2','tp3','tp4']);
+    console.error(err);
+  }finally{
+    btn.disabled=false;document.getElementById('trlBtnTxt').textContent='🌍 Translate Document';
+  }
+}
+
+/* ── Chatbot ── */
+function toggleChat(){document.getElementById('chatWin').classList.toggle('open');}
+async function sendChat(){
+  const inp=document.getElementById('chatInp');const msg=inp.value.trim();if(!msg)return;
+  inp.value='';addChatMsg(msg,'user');addChatMsg('...','bot typing');
+  const apiKey=currentApiKey();
+  try{
+    let reply='';
+    if(apiKey&&apiKey.startsWith('sk-')){
+      const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},body:JSON.stringify({model:'gpt-4o-mini',max_tokens:200,messages:[{role:'system',content:'You are HACTEL company assistant. Be concise and helpful.'},{role:'user',content:msg}]})});
+      const d=await r.json();reply=d?.choices?.[0]?.message?.content||'';
+    }
+    if(!reply)reply='Please contact us at info@hactel.com or +213 23 34 84 10.';
+    const t=document.querySelector('#chatMsgs .typing');if(t)t.remove();
+    addChatMsg(reply,'bot');
+  }catch(e){const t=document.querySelector('#chatMsgs .typing');if(t)t.remove();addChatMsg('Contact info@hactel.com for assistance.','bot');}
+}
+function addChatMsg(text,cls){const w=document.getElementById('chatMsgs');const d=document.createElement('div');d.className='cmsg '+cls;d.textContent=text;w.appendChild(d);w.scrollTop=w.scrollHeight;}
+
+/* ── Toast ── */
+function showToast(msg,type){
+  const c=document.getElementById('toasts');const el=document.createElement('div');
+  el.className='toast '+(type==='ok'?'ok':'err');
+  el.innerHTML=`<span style="font-size:16px">${type==='ok'?'✅':'❌'}</span>${msg}`;
+  el.onclick=()=>el.remove();c.appendChild(el);setTimeout(()=>el.remove(),5000);
+}
+
+/* ── Run ── */
+window.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
